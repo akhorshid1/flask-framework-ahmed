@@ -1,0 +1,85 @@
+body {
+    background-color: #234567;
+}
+
+.bk-plot-layout.bk-layout-fixed {
+    margin: auto;
+}
+
+.input {
+    color: #ffffff;
+    text-align: center;
+    margin: 40px 0;
+}
+
+#ticklab {
+    font-size: 1.25em;
+    vertical-align: middle;
+}
+    
+.error {
+    max-width: 600px;
+    margin: auto;
+}
+
+.error p {
+    text-align: center;
+    color: #ffffff;
+}
+
+.bk-tooltip-arrow::after {
+    border-left-color: #ffffff !important;
+}
+
+.bk-tooltip-arrow::before {
+    border-right-color: #ffffff !important;
+}
+
+.ttlab {
+    color: #234567;
+    text-align: right;
+}
+
+.bk-tooltip {
+    border-radius: 6px;
+}
+
+.bk-root {
+    max-width: 600px;
+    margin: auto;
+}
+
+.bk-root::after {
+    content: "Data from www.quandl.com";
+    float: right;
+    color: #ffffff;
+}
+
+input[type=text] {
+    width: 5em;
+    border-radius: 10px;
+    font-size: 1.25em;
+    line-height: 1.25em;
+    padding: 5px;
+    border-style: none;
+    outline: none;
+    vertical-align: middle;
+}
+
+input[type=text]:focus {
+    box-shadow: 0 0 0 2px #44ddaa;
+}
+
+input[type=submit] {
+    background-color: #44ddaa;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 10px;
+    border-style: none;
+    vertical-align: middle;
+    outline: none;
+}
+
+input[type=submit]:focus {
+    box-shadow: 0 0 0 2px #ffffff;
+}
