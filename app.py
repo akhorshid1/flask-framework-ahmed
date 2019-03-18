@@ -126,7 +126,7 @@ def index():
     if request.method == 'GET':
         return render_template('index.html', bokeh_script="", bokeh_div="")
     else:
-        tick = request.form['ticker_text']
+        tick = request.form[]
         if not tick.isalpha():
             return invalid()
         ticker_df = get_ticker(tick)
