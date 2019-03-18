@@ -40,6 +40,7 @@ def get_ticker(ticker):
     df['date'] = pd.to_datetime(df['date'])
     df['date_str'] = df['date'].map(lambda x: x.strftime("%Y-%m-%d"))
     df['close_str'] = df['adj_close'].map(lambda x: '{:,.2f}'.format(x))
+    
     return df
 
 def bokehplot(df, ticker):
