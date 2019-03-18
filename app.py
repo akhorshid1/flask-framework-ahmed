@@ -10,7 +10,7 @@ from bokeh.embed import components
 
 app = Flask(__name__)
 
-apikey = "E456SMCHeyee8d_sF4Sv"
+apikey = "p6zssrRQ9n4wG-fJWErU"
 
 urlhead = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker="
 urldate = "&date.gte="
@@ -20,7 +20,7 @@ urltail = "&api_key=" + apikey
 monthago = date.today() + relativedelta(months=-1)
 date = monthago.strftime("%Y-%m-%d")
 
-cols = "date,close"
+cols = "date,adj_close"
 
 def get_ticker(ticker):
     """Retrieve and process Quandl data for given ticker symbol.
