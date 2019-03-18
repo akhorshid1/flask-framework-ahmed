@@ -46,24 +46,36 @@ def get_ticker(ticker):
 def bokehplot(df, ticker):
     """Create a time-series line plot in Bokeh."""
     p = figure(width=600, height=300, title=ticker.upper(), tools="")
-
-    hover = HoverTool(tooltips = """
-    <div>
-    <table>
-    <tr><td class="ttlab">Date:</td><td>@date_str</td></tr>
-    <tr><td class="ttlab">Close:</td><td>@close_str</td></tr>
-    </table>
-    </div>
-    """)
     
+    hover = HoverTool(tooltips = [
+        ('Date', '@date_str'),
+        ('Close', '@adj_close')
+    ])
     hover.mode = 'vline'
     hover.line_policy = 'nearest'
     p.add_tools(hover)
 
     crosshair = CrosshairTool()
     crosshair.dimensions = 'height'
-    crosshair.line_color = "#ffffff"
     p.add_tools(crosshair)
+
+#    hover = HoverTool(tooltips = """
+#    <div>
+#    <table>
+#    <tr><td class="ttlab">Date:</td><td>@date_str</td></tr>
+#    <tr><td class="ttlab">Close:</td><td>@close_str</td></tr>
+#    </table>
+#    </div>
+#    """)
+#    
+#    hover.mode = 'vline'
+#    hover.line_policy = 'nearest'
+#    p.add_tools(hover)
+#
+#    crosshair = CrosshairTool()
+#    crosshair.dimensions = 'height'
+#    crosshair.line_color = "#ffffff"
+#    p.add_tools(crosshair)
 
     dfcds = ColumnDataSource(df)
     p.line('date', 'adj_close', source = dfcds, color="#44ddaa")
