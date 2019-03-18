@@ -1,26 +1,25 @@
 import requests
+import quandl
 import pandas as pd
 from flask import Flask, render_template, request, redirect
 from datetime import date
 from dateutil.relativedelta import relativedelta
+
 from bokeh.plotting import figure, show, output_notebook
-from bokeh.models import ColumnDataSource, DatetimeTickFormatter, \
-    Range1d, HoverTool, CrosshairTool
+from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Range1d, HoverTool, CrosshairTool
 from bokeh.embed import components
 
 app = Flask(__name__)
 
-apikey = "E456SMCHeyee8d_sF4Sv"
+quandl.ApiConfig.api_key = "p6zssrRQ9n4wG-fJWErU"
 
-urlhead = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker="
-urldate = "&date.gte="
-urlcols = "&qopts.columns="
-urltail = "&api_key=" + apikey
 
+# Define date month ago:
 monthago = date.today() + relativedelta(months=-1)
-date = monthago.strftime("%Y%m%d")
-
-cols = "date,close"
+monthago = monthago.strftime("%Y-%m-%d")
+# Define date today:
+today = date.today()
+today = today.strftime("%Y-%m-%d")
 
 def get_ticker(ticker):
     """Retrieve and process Quandl data for given ticker symbol.
@@ -28,48 +27,50 @@ def get_ticker(ticker):
     Retrieves the last month of closing price data for the given ticker
     symbol. Returns a pandas DataFrame.
     """
-    url = urlhead + ticker + urldate + date + urlcols + cols + urltail
-    try:
-        page = requests.get(url)
-        json = page.json()
-    except ValueError:
-        return pd.DataFrame()
-    df = pd.DataFrame(json['datatable']['data'], columns=['date','close'])
+    # Retrieve and process data
+    
+
+    data = quandl.get_table('WIKI/PRICES', ticker = ticker, 
+                        qopts = { 'columns': ['date', 'adj_close'] }, 
+                        date = { 'gte': '2018-02-18', 'lte': today }, 
+                        paginate=True)
+    
+    df = pd.DataFrame(data, columns=['date','adj_close'])
+
     df['date'] = pd.to_datetime(df['date'])
     df['date_str'] = df['date'].map(lambda x: x.strftime("%Y-%m-%d"))
-    df['close_str'] = df['close'].map(lambda x: '{:,.2f}'.format(x))
-    return df
+    dfcds = ColumnDataSource(df)
+    
+    return df, dfcds
+    
 
-def bokehplot(df, ticker):
+def bokehplot(df, dfcds, ticker):
     """Create a time-series line plot in Bokeh."""
     p = figure(width=600, height=300, title=ticker.upper(), tools="")
 
-    hover = HoverTool(tooltips = """
-    <div>
-    <table>
-    <tr><td class="ttlab">Date:</td><td>@date_str</td></tr>
-    <tr><td class="ttlab">Close:</td><td>@close_str</td></tr>
-    </table>
-    </div>
-    """)
-    
+    # Create Bokeh plot
+    p = figure(width=600, height=300, title=ticker.upper(), tools="")
+
+    hover = HoverTool(tooltips = [
+        ('Date', '@date_str'),
+        ('Close', '@adj_close')
+    ])
     hover.mode = 'vline'
     hover.line_policy = 'nearest'
     p.add_tools(hover)
 
     crosshair = CrosshairTool()
     crosshair.dimensions = 'height'
-    crosshair.line_color = "#ffffff"
     p.add_tools(crosshair)
 
-    dfcds = ColumnDataSource(df)
-    p.line('date', 'close', source = dfcds, color="#44ddaa")
+    p.line('date', 'adj_close', source = dfcds)
 
     p.xaxis.formatter=DatetimeTickFormatter(days=["%d %b"])
     p.x_range=Range1d(df['date'].min(), df['date'].max())
 
     p.toolbar.logo = None
     p.toolbar_location = None
+
 
     # Style plot
     p.background_fill_color = "#234567"
@@ -92,7 +93,8 @@ def bokehplot(df, ticker):
     p.yaxis.axis_label_standoff = 12
     
     return p
-
+# Invalid Ticker:
+    
 def invalid():
     error = None
     with open("static/error.html") as err:
@@ -102,6 +104,8 @@ def invalid():
         bokeh_script="",
         bokeh_div=error)
 
+# Main HTML Interface:
+    
 @app.route('/')
 def main():
     return redirect('/index')
