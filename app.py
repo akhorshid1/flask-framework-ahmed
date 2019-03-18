@@ -115,13 +115,13 @@ def index():
     if request.method == 'GET':
         return render_template('index.html', bokeh_script="", bokeh_div="")
     else:
-        tick = request.form['ticker_text']
-        if not tick.isalpha():
+        ticker = request.form['ticker_text']
+        if not ticker.isalpha():
             return invalid()
-        ticker_df = get_ticker(tick)
+        ticker_df = get_ticker(ticker)
         if ticker_df.empty:
             return invalid()
-        fig = bokehplot(ticker_df, tick)
+        fig = bokehplot(ticker_df, ticker)
         script, div = components(fig)
         return render_template(
             'index.html',
