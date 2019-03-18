@@ -1,34 +1,29 @@
 import requests
-import quandl
 import pandas as pd
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from bokeh.plotting import figure, show, output_notebook
-from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Range1d, HoverTool, CrosshairTool
+from bokeh.models import ColumnDataSource, DatetimeTickFormatter, \
+    Range1d, HoverTool, CrosshairTool
 
-quandl.ApiConfig.api_key = "p6zssrRQ9n4wG-fJWErU"
+apikey = "E456SMCHeyee8d_sF4Sv"
 
+urlhead = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker="
+urldate = "&date.gte="
+urlcols = "&qopts.columns="
+urltail = "&api_key=" + apikey
 
-# Define date month ago:
 monthago = date.today() + relativedelta(months=-1)
-monthago = monthago.strftime("%Y-%m-%d")
-# Define date today:
-today = date.today()
-today = today.strftime("%Y-%m-%d")
+date = monthago.strftime("%Y%m%d")
 
-
+cols = "date,close"
 
 def plot_ticker(ticker):
     # Retrieve and process data
-    
-
-    data = quandl.get_table('WIKI/PRICES', ticker = ticker, 
-                        qopts = { 'columns': ['date', 'adj_close'] }, 
-                        date = { 'gte': '2018-02-18', 'lte': today }, 
-                        paginate=True)
-    
-    df = pd.DataFrame(data, columns=['date','adj_close'])
-
+    url = urlhead + ticker + urldate + date + urlcols + cols + urltail
+    page = requests.get(url)
+    json = page.json()
+    df = pd.DataFrame(json['datatable']['data'], columns=['date','close'])
     df['date'] = pd.to_datetime(df['date'])
     df['date_str'] = df['date'].map(lambda x: x.strftime("%Y-%m-%d"))
     dfcds = ColumnDataSource(df)
@@ -38,7 +33,7 @@ def plot_ticker(ticker):
 
     hover = HoverTool(tooltips = [
         ('Date', '@date_str'),
-        ('Close', '@adj_close')
+        ('Close', '@close')
     ])
     hover.mode = 'vline'
     hover.line_policy = 'nearest'
@@ -48,7 +43,7 @@ def plot_ticker(ticker):
     crosshair.dimensions = 'height'
     p.add_tools(crosshair)
 
-    p.line('date', 'adj_close', source = dfcds)
+    p.line('date', 'close', source = dfcds)
 
     p.xaxis.formatter=DatetimeTickFormatter(days=["%d %b"])
     p.x_range=Range1d(df['date'].min(), df['date'].max())
@@ -59,6 +54,6 @@ def plot_ticker(ticker):
     return p
 
 output_notebook()
-fig = plot_ticker('AAPL')
+fig = plot_ticker('goog')
 show(fig)
 
