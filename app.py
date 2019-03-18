@@ -39,12 +39,12 @@ def get_ticker(ticker):
 
     df['date'] = pd.to_datetime(df['date'])
     df['date_str'] = df['date'].map(lambda x: x.strftime("%Y-%m-%d"))
-    dfcds = ColumnDataSource(df)
+#    dfcds = ColumnDataSource(df)
     
-    return dfcds
+    return df
     
 
-def bokehplot(dfcds, ticker):
+def bokehplot(df, ticker):
     """Create a time-series line plot in Bokeh."""
     p = figure(width=600, height=300, title=ticker.upper(), tools="")
 
@@ -63,7 +63,7 @@ def bokehplot(dfcds, ticker):
     crosshair.dimensions = 'height'
     p.add_tools(crosshair)
 
-    p.line('date', 'adj_close', source = dfcds)
+    p.line('date', 'adj_close', source = df)
 
     p.xaxis.formatter=DatetimeTickFormatter(days=["%d %b"])
     p.x_range=Range1d(df['date'].min(), df['date'].max())
