@@ -47,35 +47,35 @@ def bokehplot(df, ticker):
     """Create a time-series line plot in Bokeh."""
     p = figure(width=600, height=300, title=ticker.upper(), tools="")
     
-    hover = HoverTool(tooltips = [
-        ('Date', '@date_str'),
-        ('Close', '@adj_close')
-    ])
-    hover.mode = 'vline'
-    hover.line_policy = 'nearest'
-    p.add_tools(hover)
-
-    crosshair = CrosshairTool()
-    crosshair.dimensions = 'height'
-    p.add_tools(crosshair)
-
-#    hover = HoverTool(tooltips = """
-#    <div>
-#    <table>
-#    <tr><td class="ttlab">Date:</td><td>@date_str</td></tr>
-#    <tr><td class="ttlab">Close:</td><td>@close_str</td></tr>
-#    </table>
-#    </div>
-#    """)
-#    
+#    hover = HoverTool(tooltips = [
+#        ('Date', '@date_str'),
+#        ('Close', '@adj_close')
+#    ])
 #    hover.mode = 'vline'
 #    hover.line_policy = 'nearest'
 #    p.add_tools(hover)
 #
 #    crosshair = CrosshairTool()
 #    crosshair.dimensions = 'height'
-#    crosshair.line_color = "#ffffff"
 #    p.add_tools(crosshair)
+
+    hover = HoverTool(tooltips = """
+    <div>
+    <table>
+    <tr><td class="ttlab">Date:</td><td>@date_str</td></tr>
+    <tr><td class="ttlab">Close:</td><td>@close_str</td></tr>
+    </table>
+    </div>
+    """)
+    
+    hover.mode = 'vline'
+    hover.line_policy = 'nearest'
+    p.add_tools(hover)
+
+    crosshair = CrosshairTool()
+    crosshair.dimensions = 'height'
+    crosshair.line_color = "#ffffff"
+    p.add_tools(crosshair)
 
     dfcds = ColumnDataSource(df)
     p.line('date', 'adj_close', source = dfcds, color="#44ddaa")
@@ -87,24 +87,24 @@ def bokehplot(df, ticker):
     p.toolbar_location = None
 
     # Style plot
-#    p.background_fill_color = "#234567"
-#    p.border_fill_color = "#234567"
-#    p.title.text_color = "#ffffff"
-#    p.title.text_font_size = "1.25em"
-#    p.axis.major_label_text_color = "#ffffff"
-#    p.axis.major_label_text_font_size = "0.875em"
-#    p.axis.axis_line_color = "#ffffff"
-#    p.axis.major_tick_line_color = "#ffffff"
-#    p.axis.minor_tick_line_color = "#ffffff"
-#    p.xgrid.grid_line_color = None
-#    p.ygrid.grid_line_alpha = 0.5
-#    p.ygrid.grid_line_dash = [4, 6]
-#    p.outline_line_color = None
-#    p.yaxis.axis_label = "Closing price"
-#    p.yaxis.axis_label_text_color = "#ffffff"
-#    p.yaxis.axis_label_text_font_size = "1em"
-#    p.yaxis.axis_label_text_font_style = "normal"
-#    p.yaxis.axis_label_standoff = 12
+    p.background_fill_color = "#234567"
+    p.border_fill_color = "#234567"
+    p.title.text_color = "#ffffff"
+    p.title.text_font_size = "1.25em"
+    p.axis.major_label_text_color = "#ffffff"
+    p.axis.major_label_text_font_size = "0.875em"
+    p.axis.axis_line_color = "#ffffff"
+    p.axis.major_tick_line_color = "#ffffff"
+    p.axis.minor_tick_line_color = "#ffffff"
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_alpha = 0.5
+    p.ygrid.grid_line_dash = [4, 6]
+    p.outline_line_color = None
+    p.yaxis.axis_label = "Closing price"
+    p.yaxis.axis_label_text_color = "#ffffff"
+    p.yaxis.axis_label_text_font_size = "1em"
+    p.yaxis.axis_label_text_font_style = "normal"
+    p.yaxis.axis_label_standoff = 12
     
     return p
 
@@ -132,6 +132,7 @@ def index():
         ticker_df = get_ticker(tick)
         if ticker_df.empty:
             return invalid()
+        
         fig = bokehplot(ticker_df, tick)
         script, div = components(fig)
         return render_template(
