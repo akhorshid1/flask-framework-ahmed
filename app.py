@@ -29,7 +29,7 @@ def get_ticker(ticker):
     symbol. Returns a pandas DataFrame.
     """
 #    url = urlhead + ticker + urldate + date + urlcols + cols + urltail
-    url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=AAPL&date.gte=2019-02-18&qopts.columns=date,adj_close&api_key=p6zssrRQ9n4wG-fJWErU'
+    url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=AAPL&date.gte=2018-02-18&qopts.columns=date,adj_close&api_key=p6zssrRQ9n4wG-fJWErU'
 
     try:
         page = requests.get(url)
