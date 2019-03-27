@@ -50,7 +50,7 @@ body {
 }
 
 .bk-root::after {
-    content: "Data from www.quandl.com";
+    content: "Data from www.alphavantage.co";
     float: right;
     color: #ffffff;
 }

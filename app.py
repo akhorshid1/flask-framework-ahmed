@@ -2,7 +2,7 @@ import requests
 import os
 import pandas as pd
 import numpy as np
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, abort
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from bokeh.plotting import figure, show, output_notebook
@@ -11,7 +11,7 @@ from bokeh.embed import components
 
 app = Flask(__name__)
 
-# apikey is retrieved from config vars to be kept safe:
+# api key is retrieved from config vars to be kept safe:
 apikey = os.environ.get('API_KEY')
 
 urlhead = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='
@@ -121,8 +121,11 @@ def index():
     if request.method == 'GET':
         return render_template('index.html', bokeh_script="", bokeh_div="")
     else:
-        tick = request.form['ticker_text']
+#        tick = request.form['ticker_text']
+        tick = request.form.get('ticker_text')
         if not tick.isalpha():
+        # isalpha() returns 'True' if all characters in the str are alphabets
+#            abort(404)
             return invalid()
         ticker_df = get_ticker(tick)
         if ticker_df.empty:
