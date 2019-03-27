@@ -1,4 +1,5 @@
 import requests
+import os
 import pandas as pd
 import numpy as np
 from flask import Flask, render_template, request, redirect
@@ -10,7 +11,8 @@ from bokeh.embed import components
 
 app = Flask(__name__)
 
-apikey = 'U2BEMNCEBODUY397'
+# apikey is retrieved from config vars to be kept safe:
+apikey = os.environ.get('API_KEY')
 
 urlhead = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='
 urldate = '&date='
